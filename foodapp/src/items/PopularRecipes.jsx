@@ -1,120 +1,119 @@
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import {Splide, SplideSlide} from '@splidejs/react-splide';
-import '@splidejs/react-splide/css';
-import {Link} from "react-router-dom";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/react-splide/css";
+import { Link } from "react-router-dom";
 function PopularRecipes() {
-    const [popular,setPopular]=useState([]);
-    useEffect(()=>{
-        getPopularRecipes();
-    },[]);
-    const getPopularRecipes = async()=>{
-        const check=localStorage.getItem('popular');
-        if(check){
-            setPopular(JSON.parse(check));
+  const [popular, setPopular] = useState([]);
+  useEffect(() => {
+    getPopularRecipes();
+  }, []);
+  const getPopularRecipes = async () => {
+    const check = localStorage.getItem("popular");
+    if (check) {
+      setPopular(JSON.parse(check));
+    } else {
+      const api = await fetch(
+        `https://api.spoonacular.com/recipes/random?apiKey=6b5780a445454adebee9acd4cb44c625&number=24`
+      );
+      const data = await api.json();
+      localStorage.setItem("popular", JSON.stringify(data.recipes));
+      setPopular(data.recipes);
+      console.log(data.recipes);
+    }
+  };
 
-        }else{
-            const api = await fetch(`https://api.spoonacular.com/recipes/random?apiKey=6b5780a445454adebee9acd4cb44c625&number=24`);
-            const data = await api.json();
-            localStorage.setItem('popular',JSON.stringify(data.recipes))
-            setPopular(data.recipes);
-            console.log(data.recipes);
-        }
-        
-     
-        
-
-    };
-     
-    
-return ( 
-  <div> 
-      
-        <Container> 
-               
-                <Splide options={{
-                    perPage:5,
-                    pagination:false,
-                    drag:'free',
-                    gap:"5px",
-                }}>
-                {popular.map((recipe)=>{
-                return(
-                <SplideSlide>
+  return (
+    <div>
+      <Container>
+        <Splide
+          options={{
+            perPage: 5,
+            pagination: false,
+            drag: "free",
+            gap: "5px",
+          }}
+        >
+          {popular.map((recipe) => {
+            return (
+              <SplideSlide>
                 <Card>
-                    <Link to={'/recipe/'+ recipe.id }>
+                  <Link to={"/recipe/" + recipe.id}>
                     <p>{recipe.title}</p>
-                    <img src={recipe.image} alt={recipe.title}/>
-            
-                 <Gradient/>   
-                 </Link>
+                    <img src={recipe.image} alt={recipe.title} />
+                  </Link>
                 </Card>
-                </SplideSlide>
-                );
-              })}
-            </Splide>
-        </Container>    
-  </div> 
+              </SplideSlide>
+            );
+          })}
+        </Splide>
+      </Container>
+    </div>
   );
 }
 
 const Container = styled.div`
-display:flex;
-justify-content:center;
-align-items:center;
-margin:20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+  @media (max-width: 480px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 5px;
+    paddin: 5px;
+  }
 `;
 
- 
+const Card = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 10rem;
+  border-radius: 2rem;
+  overflow: hidden;
+  position: relative;
+  font-family: serif;
+  font-weight: 800;
 
-const Card = styled.div `
-display:flex;
-justify-content:space-between;
-align-items:center;
-min-height:10rem;
-border-radius:2rem; 
-overflow:hidden;
-position:relative;
-font-family:serif;
-font-weight:800;
-
- 
-img{
-    max-width:100%;
-    max-height:100%;
-    padding:10px;
-    border-radius:2rem;
-    object-fit:cover;
-   
-    
-}
-p{
-    position:absolute;
-    z-index:7;
-    padding:10px;
-    left:50%;
-    bottom:20%;
-    transform:translate(-50%,0%);
-    width:100%;
-    text-align:center;
-    color:beige;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    text-shadow:
-   -0.5px -0.5px 0 #000,  
-    0.5px -0.5px 0 #000,
-    -0.5px 0.5px 0 #000,
-     0.5px 0.5px 0 #000;
-    
-}
+  img {
+    max-width: 100%;
+    max-height: 100%;
+    padding: 10px;
+    border-radius: 2rem;
+    object-fit: cover;
+  }
+  p {
+    position: absolute;
+    z-index: 7;
+    padding: 10px;
+    left: 50%;
+    bottom: 20%;
+    transform: translate(-50%, 0%);
+    width: 100%;
+    text-align: center;
+    color: beige;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-shadow: -0.5px -0.5px 0 #000, 0.5px -0.5px 0 #000, -0.5px 0.5px 0 #000,
+      0.5px 0.5px 0 #000;
+  }
+  h6 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  @media (max-width: 480px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 5px;
+    paddin: 5px;
+  }
 `;
-const Gradient = styled.div `
-z-index:10;
-position:absolute;
-max-width:100%;
-max- height:100%; 
-background:linear-gradient(rgba(0,0,0,0),rgba(0,0,0,0.6));
-`; 
 
-export default PopularRecipes; 
+export default PopularRecipes;
